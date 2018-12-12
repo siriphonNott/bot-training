@@ -30,7 +30,7 @@ app.post('/webhook', (req, res)=>{
     //Check Empty object
     if(Object.keys(req.body).length !== 0) {
     
-        let events = req.body.events;
+        let events = req.body;
         //--- Param -----
         let replyToken = events.replyToken;
         let type = events.type;
@@ -74,6 +74,7 @@ app.post('/webhook', (req, res)=>{
 
 // ------- Function -------
 const replyMessage = (replyToken, message) => {
+    console.log(`==> replyMessage : ${replyToken}, msg: [${message}]`);
     client.replyMessage(replyToken, message)
         .then(() => {
             console.log(`==> Reply is successfully!`);
@@ -84,6 +85,7 @@ const replyMessage = (replyToken, message) => {
 }
 
 const pushMessage = (userId, message) => {
+    console.log(`==> replyMessage : userId: [${userId}], msg: [${message}]`);
     client.pushMessage(userId, message)
         .then(() => {
             console.log(`==> Push is successfully!`);
