@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/siriphonNott/bot-training#readme",
   "dependencies": {
+    "@line/bot-sdk": "^6.4.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4"
   }
