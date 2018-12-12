@@ -8,13 +8,38 @@ const line = require('@line/bot-sdk');
 const app = express();
 const PORT = process.env.PORT ||  5000;
 const client = new line.Client({
-  channelAccessToken: '<channel access token>'
+  channelAccessToken: '67UQoneQDFAObETiUEGx5DH2dsZRComFPjjPCCrNghi/35LH9Q7lVwleXQj3XTFfDKhO9ggbKh4VDZXoqzX3d98xcxK/OZrSI4BYf5lGLzpQ+Og6OniOY1PTX7Yf22DAg8un4AH9b8poHrszPankKwdB04t89/1O/w1cDnyilFU='
 });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 //------------------------
+
+
+// ------- Function -------
+const replyMessage = (replyToken, message) => {
+    console.log(`==> replyMessage : ${replyToken}, msg: [${message}]`);
+    client.replyMessage(replyToken, message)
+        .then(() => {
+            console.log(`==> Reply is successfully!`);
+        })
+        .catch((err) => {
+            console.log(`==> Reply is error: ${err}`);
+        });
+}
+
+const pushMessage = (userId, message) => {
+    console.log(`==> replyMessage : userId: [${userId}], msg: [${message}]`);
+    client.pushMessage(userId, message)
+        .then(() => {
+            console.log(`==> Push is successfully!`);
+        })
+        .catch((err) => {
+            console.log(`==> Push is error: ${err}`);
+        });
+}
+// ------------------------
 
 //------- Route ----------
 app.get('/', (req, res) => {
@@ -73,30 +98,6 @@ app.post('/webhook', (req, res)=>{
         res.status(400).send({errorMessage: 'body is empty!'});
     }
 });
-// ------------------------
-
-// ------- Function -------
-const replyMessage = (replyToken, message) => {
-    console.log(`==> replyMessage : ${replyToken}, msg: [${message}]`);
-    client.replyMessage(replyToken, message)
-        .then(() => {
-            console.log(`==> Reply is successfully!`);
-        })
-        .catch((err) => {
-            console.log(`==> Reply is error: ${err}`);
-        });
-}
-
-const pushMessage = (userId, message) => {
-    console.log(`==> replyMessage : userId: [${userId}], msg: [${message}]`);
-    client.pushMessage(userId, message)
-        .then(() => {
-            console.log(`==> Push is successfully!`);
-        })
-        .catch((err) => {
-            console.log(`==> Push is error: ${err}`);
-        });
-}
 // ------------------------
 
 app.listen(PORT, ()=>{
