@@ -55,7 +55,7 @@ app.post('/webhook', (req, res)=>{
     //Check Empty object
     if(Object.keys(req.body).length !== 0) {
     
-        let events = req.body.events;
+        let events = req.body.events[0];
         console.log('==> events');
         console.log(events);
         
