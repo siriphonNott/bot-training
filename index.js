@@ -63,7 +63,7 @@ app.post('/webhook', (req, res)=>{
         let replyToken = events.replyToken;
         let type = events.type;
         //---------------
-        const message = [];
+        let message = [];
 
         switch (type) {
             //Event -> Text, Sticker, Picture
