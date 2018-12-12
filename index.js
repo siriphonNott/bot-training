@@ -35,11 +35,12 @@ app.post('/webhook', (req, res)=>{
         let replyToken = events.replyToken;
         let type = events.type;
         //---------------
+        const message = [];
 
         switch (type) {
             //Event -> Text, Sticker, Picture
             case 'message':
-                const message = {
+                message = {
                     type: 'text',
                     text: 'Nott Dev Krab ^^'
                 };
@@ -52,7 +53,7 @@ app.post('/webhook', (req, res)=>{
 
             //Event -> unblock
             case 'unfollow':
-                const message = {
+                message = {
                     type: 'text',
                     text: 'ลบเราออกทำไมหรอ Y_Y'
                 };
