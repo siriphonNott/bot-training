@@ -49,6 +49,20 @@ app.get('/', (req, res) => {
    
 });
 
+app.post('/postMessage', (req, res) => {
+    res.send({status:'In service'})
+    console.log('==> Get /')
+    console.log(req.params);
+    console.log(req.query);
+    
+    // if(Object.keys(req.params).length) {
+    //     console.log('ok');
+    // } else {
+    //     throw {status:'not good'};
+    // }
+   
+});
+
 app.post('/webhook', async (req, res) => {
     let dateLog = moment.format("YYYY-MM-DD HH:mm:ss")
     console.log(`Date: ${dateLog}`);
@@ -281,7 +295,8 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         jsonBody.timestamp = timestamp
         jsonBody.case = {
             caseRelated: '',
-            caseOpenDate: ''
+            caseOpenDate: '',
+            caseReserve: ''
         }
         console.log(`[jsonBody]`);
         console.log(jsonBody);
