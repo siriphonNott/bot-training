@@ -34,6 +34,12 @@ firebase.database().ref('/users/').on('value', (snapshot)=>{
 });
 //------------------------
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 //------- Route ----------
 app.get('/', (req, res) => {
     res.send({status:'In service'})
