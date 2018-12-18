@@ -324,6 +324,8 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         let today = moment.format("YYYYMMDD");
         console.log('date===>>>>');
         console.log(moment.format("YYYYMMDD hh:ss"));
+        console.log('_moment date===>>>>');
+        console.log(_moment().utcOffset('+07:00').format('MMMM Do YYYY, h:mm:ss a'));
         
         jsonBody.source = source
         jsonBody.message = message
