@@ -98,7 +98,7 @@ app.post('/webhook', async (req, res)=>{
                         jsonBody.replyToken = '';
                         jsonBody.name = '';
         
-                        database.ref(`users/${userId}`).set(jsonBody, function(error) {
+                        database.ref(`users/${joinedMembers.userId}`).set(jsonBody, function(error) {
                             if (error) {
                             console.log('add fail: '+error);
                             } else {
@@ -162,7 +162,7 @@ app.post('/webhook', async (req, res)=>{
                         jsonBody.replyToken = '';
                         jsonBody.name = '';
         
-                        database.ref(`users/${userId}`).set(jsonBody, function(error) {
+                        database.ref(`users/${events.source.userId}`).set(jsonBody, function(error) {
                             if (error) {
                             console.log('add fail: '+error);
                             } else {
@@ -170,10 +170,10 @@ app.post('/webhook', async (req, res)=>{
                             }
                         });
 
-                        getProfile(userId)
+                        getProfile(events.source.userId)
                         .then((profile) => {
                             console.log(profile);
-                            database.ref(`users/${userId}/profile`).set(profile, function(error) {
+                            database.ref(`users/${events.source.userId}/profile`).set(profile, function(error) {
                                 if (error) {
                                     console.log('==> [Add profile fail]: '+error);
                                 } else {
