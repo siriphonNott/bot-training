@@ -74,17 +74,36 @@ app.post('/role', (req, res) => {
 });
 
 //Stamp message
-app.post('/postMessage', (req, res) => {
+app.post('/postMessage', async (req, res) => {
     console.log('==> /postMessage')
     let body = req.body;
     console.log('==> boby');
     console.log(body);
     if(Object.keys(body).length != 0) {
-        let to = body.to;
-        let message = body.messageId;
+        let message = body.message;
+        let targetId = body.targetId;
+        let type = body.type;
+        let source = {
+            groupId: targetId,
+            action: 'bot'
+        }
+
+        if(type == 'group') {
+            source.groupId = targetId
+            source.type = 'group'
+        } else  {
+            source.userId = targetId
+            source.type = 'user'
+        }
+        
+        let messageBody = {
+            text: message,
+            type: 'text',
+            id: moment.format('YYYYMMDDhhmmss')
+        }
         try {
-            stampMessage(to, message)
-            await = pushMessage(to, message)
+            stampMessage(source, messageBody)
+            await pushMessage(targetId, message)
             res.send({message: `success`});
         } catch (error) {
             res.status(400).send({message: `can't send message. `});
@@ -317,9 +336,6 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     console.log(`==> [Stamp Message]`)
     timestamp  = timestamp || moment.unix()
     
-    console.log('time 1==> '+_moment().utcOffset('+07:00').unix());
-    console.log('time 2==> '+moment.unix());
-    
     if (Object.keys(source).length == 0  ||  Object.keys(message).length == 0) {
         console.log('source or message  is empty!');
         return false
@@ -365,8 +381,12 @@ const replyMessage = (replyToken, message) => {
 
 const pushMessage = (userId, message) => {
     console.log(`==> pushMessage : userId: [${userId}], message: [${message}]`);
+    let msg = {
+        type: "text",
+        text: message
+    }
     return new Promise( (resolve, reject) => {
-        client.pushMessage(userId, message)
+        client.pushMessage(userId, msg)
             .then(() => {
                 console.log(`==> Push is successfully!`);
                 return resolve(true);
