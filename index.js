@@ -101,7 +101,7 @@ app.post('/webhook', async (req, res) => {
                         jsonBody.follow = '';
                         jsonBody.createdBy = 'memberJoined';
                         jsonBody.replyToken = '';
-                        jsonBody.name = '';
+                        jsonBody.name = 'N/A';
         
                         database.ref(`users/${joinedMembers.userId}`).set(jsonBody, function(error) {
                             if (error) {
@@ -166,7 +166,7 @@ app.post('/webhook', async (req, res) => {
                         jsonBody.follow = events.type;
                         jsonBody.createdBy = events.type;
                         jsonBody.replyToken = '';
-                        jsonBody.name = '';
+                        jsonBody.name = 'N/A';
         
                         database.ref(`users/${events.source.userId}`).set(jsonBody, function(error) {
                             if (error) {
@@ -279,21 +279,21 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         jsonBody.source = source
         jsonBody.message = message
         jsonBody.timestamp = timestamp
-        jsonBody.caseRelate = null;
+        jsonBody.case = {
+            caseRelated: '',
+            caseOpenDate: ''
+        }
         console.log(`[jsonBody]`);
         console.log(jsonBody);
         
         let targetType = `${source.type}s`;
         let targetId = (targetType == 'group')?source.groupId:source.userId
 
-        console.log('targetType: '+targetType);
-        console.log('targetId: '+targetId);
-
         database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${message.id}`).set(jsonBody, function(error) {
             if (error) {
-            console.log('add fail: '+error);
+            console.log('==> Stamp fail: '+error);
             } else {
-            console.log('add successfully');
+            console.log('==> Stamp successfully');
             }
         });
     }
