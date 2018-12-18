@@ -334,7 +334,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         console.log(jsonBody);
         
         let targetType = `${source.type}s`;
-        let targetId = (source.types == 'group')?source.groupId:source.userId
+        let targetId = (source.type == 'group')?source.groupId:source.userId
 
         database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${message.id}`).set(jsonBody, function(error) {
             if (error) {
