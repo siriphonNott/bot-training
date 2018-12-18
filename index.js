@@ -353,6 +353,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         jsonBody.source = source
         jsonBody.message = message
         jsonBody.timestamp = timestamp
+        jsonBody.duration = 0
         jsonBody.case = {
             caseRelated: '',
             caseOpenDate: '',
