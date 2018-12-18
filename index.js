@@ -5,6 +5,8 @@ const line = require('@line/bot-sdk');
 const firebase =  require('firebase-admin');
 const axios =  require('axios');
 const _ = require("lodash")
+const _moment = require("moment")
+const moment = _moment().utcOffset('+07:00');
 //------------------------
 
 //------- Initial --------
@@ -47,7 +49,10 @@ app.get('/', (req, res) => {
    
 });
 
-app.post('/webhook', async (req, res)=>{
+app.post('/webhook', async (req, res) => {
+    let dateLog = moment.format("YYYY-MM-DD HH:mm:ss")
+    console.log(`Date: ${dateLog}`);
+    
     console.log('==> POST /webhook');
     console.log("==> body: ");
     console.log(req.body);
@@ -262,14 +267,11 @@ const getProfile = (userId) => {
 }
 
 const stampMessage = (source  = {}, message = {}, timestamp = null) => {
-    console.log(`==> [Stamp Message]`);
-    console.log('source: ');
-    console.log(source);
-    console.log('message: ');
-    console.log(message);
+    console.log(`==> [Stamp Message]`)
+    timestamp  = timestamp || moment.unix()
     
-    if (Object.keys(source).length ||  Object.keys(message).length  || timestamp) {
-        console.log('source, message or timestamp is empty!');
+    if (Object.keys(source).length == 0  ||  Object.keys(message).length == 0) {
+        console.log('source or message  is empty!');
         return false
     } else {
         let jsonBody = {}

@@ -24,6 +24,7 @@
     "express": "^4.16.4",
     "firebase-admin": "^6.3.0",
     "lodash": "^4.17.11",
+    "moment": "^2.23.0",
     "nodemon": "^1.18.8"
   }
 }
