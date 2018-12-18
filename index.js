@@ -49,18 +49,48 @@ app.get('/', (req, res) => {
    
 });
 
+//Set role
+app.post('/role', (req, res) => {
+    console.log('==> /role')
+    let body = req.body;
+    console.log('==> boby');
+    console.log(body);
+    if(Object.keys(body).length != 0) {
+        let userId = body.userId;
+        let role = body.role;
+        let update = {
+            role: role
+        }
+        database.ref(`users/${userId}`).set(update, function(error) {
+            if (error) {
+            console.log('add fail: '+error);
+            } else {
+            console.log('add successfully');
+            }
+        });
+    } else {
+        res.status(400).send({message: 'body is empty!'});
+    }
+});
+
+//Stamp message
 app.post('/postMessage', (req, res) => {
-    res.send({status:'In service'})
-    console.log('==> Get /')
-    console.log(req.params);
-    console.log(req.query);
-    
-    // if(Object.keys(req.params).length) {
-    //     console.log('ok');
-    // } else {
-    //     throw {status:'not good'};
-    // }
-   
+    console.log('==> /postMessage')
+    let body = req.body;
+    console.log('==> boby');
+    console.log(body);
+    if(Object.keys(body).length != 0) {
+        let to = body.to;
+        let message = body.messageId;
+        try {
+            await = pushMessage(to, message)
+            res.send({message: `success`});
+        } catch (error) {
+            res.status(400).send({message: `can't send message. `});
+        }
+    } else {
+        res.status(400).send({message: 'body is empty!'});
+    }
 });
 
 app.post('/webhook', async (req, res) => {
@@ -115,6 +145,7 @@ app.post('/webhook', async (req, res) => {
                         jsonBody.follow = '';
                         jsonBody.createdBy = 'memberJoined';
                         jsonBody.replyToken = '';
+                        jsonBody.role = '';
                         jsonBody.name = 'N/A';
         
                         database.ref(`users/${joinedMembers.userId}`).set(jsonBody, function(error) {
@@ -180,6 +211,7 @@ app.post('/webhook', async (req, res) => {
                         jsonBody.follow = events.type;
                         jsonBody.createdBy = events.type;
                         jsonBody.replyToken = '';
+                        jsonBody.role = '';
                         jsonBody.name = 'N/A';
         
                         database.ref(`users/${events.source.userId}`).set(jsonBody, function(error) {
@@ -302,7 +334,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         console.log(jsonBody);
         
         let targetType = `${source.type}s`;
-        let targetId = (targetType == 'group')?source.groupId:source.userId
+        let targetId = (source.types == 'group')?source.groupId:source.userId
 
         database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${message.id}`).set(jsonBody, function(error) {
             if (error) {
@@ -328,13 +360,18 @@ const replyMessage = (replyToken, message) => {
 
 const pushMessage = (userId, message) => {
     console.log(`==> pushMessage : userId: [${userId}], message: [${message}]`);
-    client.pushMessage(userId, message)
-        .then(() => {
-            console.log(`==> Push is successfully!`);
-        })
-        .catch((err) => {
-            console.log(`==> Push is error: ${err}`);
-        });
+    return new Promise( (resolve, reject) => {
+        client.pushMessage(userId, message)
+            .then(() => {
+                console.log(`==> Push is successfully!`);
+                return resolve(true);
+            })
+            .catch((err) => {
+                console.log(`==> Push is error: ${err}`);
+                return reject(false)
+            });
+    });
+   
 }
 // ------------------------
 
