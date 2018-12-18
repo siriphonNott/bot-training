@@ -275,6 +275,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         return false
     } else {
         let jsonBody = {}
+        let today = moment.format("YYYYMMDD");
         jsonBody.source = source
         jsonBody.message = message
         jsonBody.timestamp = timestamp
