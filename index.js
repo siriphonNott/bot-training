@@ -106,10 +106,10 @@ app.post('/webhook', async (req, res)=>{
                             }
                         });
 
-                        getProfile(userId)
+                        getProfile(joinedMembers.userId)
                         .then((profile) => {
                             console.log(profile);
-                            database.ref(`users/${userId}/profile`).set(profile, function(error) {
+                            database.ref(`users/${joinedMembers.userId}/profile`).set(profile, function(error) {
                                 if (error) {
                                     console.log('==> [Add profile fail]: '+error);
                                 } else {
