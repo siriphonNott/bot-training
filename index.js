@@ -83,6 +83,7 @@ app.post('/postMessage', (req, res) => {
         let to = body.to;
         let message = body.messageId;
         try {
+            stampMessage(to, message)
             await = pushMessage(to, message)
             res.send({message: `success`});
         } catch (error) {
@@ -316,16 +317,15 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     console.log(`==> [Stamp Message]`)
     timestamp  = timestamp || moment.unix()
     
+    console.log('time 1==> '+_moment().utcOffset('+07:00').unix());
+    console.log('time 2==> '+moment.unix());
+    
     if (Object.keys(source).length == 0  ||  Object.keys(message).length == 0) {
         console.log('source or message  is empty!');
         return false
     } else {
         let jsonBody = {}
-        let today = moment.format("YYYYMMDD");
-        console.log('date===>>>>');
-        console.log(moment.format("YYYYMMDD hh:ss"));
-        console.log('_moment date===>>>>');
-        console.log(_moment().utcOffset('+07:00').format('MMMM Do YYYY, h:mm:ss a'));
+        let today = _moment().utcOffset('+07:00').format('YYYYMMDD')
         
         jsonBody.source = source
         jsonBody.message = message
