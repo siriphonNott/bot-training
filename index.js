@@ -251,8 +251,13 @@ const getProfile = (userId) => {
 
 const stampMessage = (source  = null, message = null, timestamp = null) => {
     console.log(`==> [Stamp Message]`);
-    if (source || messageId) {
-        console.log('source and message is empty!');
+    console.log('source: ');
+    console.log(source);
+    console.log('message: ');
+    console.log(message);
+    
+    if (source || message || timestamp) {
+        console.log('source, message or timestamp is empty!');
         return false
     } else {
         let jsonBody = {}
