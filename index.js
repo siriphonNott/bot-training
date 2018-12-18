@@ -87,9 +87,8 @@ app.post('/webhook', async (req, res)=>{
             //Event -> any user join group 
             case 'memberJoined':
                 console.log(`==> [Member Joined]`);
-                let joinedMembers = events.joined.members;
+                let joinedMembers = events.joined.members[0];
                 console.log(joinedMembers);
-                console.log(`==> [Follow]`);
                 database.ref(`users/${joinedMembers.userId}`).once('value').then(function(snapshot) {
                     if(snapshot.val() == null) {
                         jsonBody.createdAt = events.timestamp;
@@ -120,7 +119,7 @@ app.post('/webhook', async (req, res)=>{
                         })
                         .catch((err) => {
                             console.log('getProfile is error: ');
-                            console.log(err);
+                            console.log(err.Error);
                         });
                     } 
                 });
@@ -185,7 +184,7 @@ app.post('/webhook', async (req, res)=>{
                         })
                         .catch((err) => {
                             console.log('getProfile is error: ');
-                            console.log(err);
+                            console.log(err.Error);
                         });
                     } else {
                         var updates = {};
