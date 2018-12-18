@@ -22,6 +22,7 @@ firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: "https://nottdev-training.firebaseio.com"
 });
+const database = firebase.database();
 //------------------------
 
 //------ on listen -------
