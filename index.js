@@ -9,7 +9,6 @@ const _ = require("lodash")
 
 //------- Initial --------
 const app = express();
-var dataFirebase = {};
 const PORT = process.env.PORT ||  5000;
 const client = new line.Client({
     channelAccessToken: '67UQoneQDFAObETiUEGx5DH2dsZRComFPjjPCCrNghi/35LH9Q7lVwleXQj3XTFfDKhO9ggbKh4VDZXoqzX3d98xcxK/OZrSI4BYf5lGLzpQ+Og6OniOY1PTX7Yf22DAg8un4AH9b8poHrszPankKwdB04t89/1O/w1cDnyilFU='
@@ -23,121 +22,14 @@ firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: "https://nottdev-training.firebaseio.com"
 });
-firebase.database().ref('/kb/').once('value')
-.then( (snapshot) => {
-    console.log('Get Firebase');
-    dataFirebase = snapshot.val();
-});
 //------------------------
 
 //------ on listen -------
-firebase.database().ref('/kb/').on('value', (snapshot)=>{
-    console.log('Update Firebase');
+firebase.database().ref('/users/').on('value', (snapshot)=>{
+    console.log('Firebase have Update');
     dataFirebase = snapshot.val();
 });
 //------------------------
-
-// ------- Function -------
-const getDataSite = (content = '', site = '') => {
-    let url = '';
-    return new Promise( (resolve, reject) => {
-        if(type=='' && site=='') {
-            url = '/kb/';
-        } else {
-            url = `/kb/${site}/${content}`;
-        }
-        firebase.database().ref(url).once('value')
-        .then( (snapshot) => {
-            console.log(`==> Get Data: Site: [${site}], Content: [${content}]`);
-            return ( Object.keys(snapshot.val()).length != 0 )?snapshot.val():'';
-        });
-    });
-}
-
-const replyMessage = (replyToken, message) => {
-    console.log(`==> replyMessage : replyToken:[${replyToken}], msg: [${message}]`);
-    client.replyMessage(replyToken, message)
-        .then(() => {
-            console.log(`==> Reply is successfully!`);
-        })
-        .catch((err) => {
-            console.log(`==> Reply is error: ${err}`);
-        });
-}
-
-const pushMessage = (userId, message) => {
-    console.log(`==> pushMessage : userId: [${userId}], msg: [${message}]`);
-    client.pushMessage(userId, message)
-        .then(() => {
-            console.log(`==> Push is successfully!`);
-        })
-        .catch((err) => {
-            console.log(`==> Push is error: ${err}`);
-        });
-}
-// ------------------------
-
-const test1 =  (resolve, reject) => {
-    return new Promise((resolve, reject ) => {
-        return resolve('fn1');
-        
-    });
-}
-const test2 =  (resolve, reject) => {
-    return new Promise((resolve, reject ) => {
-        // return resolve('fn2');
-        return reject('error: fn2');
-    });
-}
-const test3 =  (resolve, reject) => {
-    return new Promise((resolve, reject ) => {
-        return resolve('fn3');
-    });
-}
-
-const main = async () => {
-
-    const prices = [
-        '1,000,000',
-        '999',
-        '38,900',
-        '64,111'
-      ]
-      
-      prices.forEach(price => console.log(price.padStart(10)))
-     
-
-    // test1()
-    // .then((result1)=>{
-    //     console.log(result1);
-    //     return test2();
-    // })
-    // .then((result2)=>{
-    //     console.log(result2);
-    //     return test3();
-    // })
-    // .then((result3)=>{
-    //     console.log(result3);
-    // })
-    // .catch((error)=>{
-    //     console.log(error);
-    // })
-    try {
-        const result1 = await test1()
-        const result2 = await test2()
-        const result3 = await test3()
-
-        console.log('result1: '+result1);
-        console.log('result2: '+result2);
-        console.log('result2: '+result3);
-        
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-// main()
 
 //------- Route ----------
 app.get('/', (req, res) => {
@@ -154,7 +46,7 @@ app.get('/', (req, res) => {
    
 });
 
-app.post('/webhook', (req, res)=>{
+app.post('/webhook', async (req, res)=>{
     console.log('==> POST /webhook');
     console.log("==> body: ");
     console.log(req.body);
@@ -175,31 +67,11 @@ app.post('/webhook', (req, res)=>{
         switch (type) {
             //Event -> Text, Sticker, Picture
             case 'message':
-               let messageText = events.message.text;
                let messageType = events.message.type;
-               let messageId = events.message.id;
 
                switch (messageType) {
                    case 'text':
-                        let command = messageText.split(' ');
-                        if(messageText !== '' && command.length >= 2){
-                            let firstCommand = command[0];
-                            let secondCommand = command[1] || '';
-                            switch (firstCommand) {
-                                case 'list site':
-                                    break;
-                                case 'config':
-                                    break;
-                                case 'contact':
-                                    break;
-                                case 'list':
-                                    break;
-                                default:
-                                    break;
-                            }
-                        } else {
-
-                        }
+                        stampMessage(events.source, events.message, events.timestamp)
                         break;
                    case 'sticker':
                         break;
@@ -208,10 +80,6 @@ app.post('/webhook', (req, res)=>{
                    default:
                        break;
                }
-                message = {
-                    type: 'text',
-                    text: 'Nott Dev Krab ^^'
-                };
                 // replyMessage(replyToken, message);
                 break;
  
@@ -220,6 +88,42 @@ app.post('/webhook', (req, res)=>{
                 console.log(`==> [Member Joined]`);
                 let joinedMembers = events.joined.members;
                 console.log(joinedMembers);
+                console.log(`==> [Follow]`);
+                let userId = joinedMembers.userId;
+                database.ref(`users/${userId}`).once('value').then(function(snapshot) {
+                    if(snapshot.val() == null) {
+                        jsonBody.createdAt = events.timestamp;
+                        jsonBody.updatedAt = events.timestamp;
+                        jsonBody.follow = '';
+                        jsonBody.replyToken = '';
+                        jsonBody.name = '';
+        
+                        database.ref(`users/${userId}`).set(jsonBody, function(error) {
+                            if (error) {
+                            console.log('add fail: '+error);
+                            } else {
+                            console.log('add successfully');
+                            }
+                        });
+
+                        getProfile(userId)
+                        .then((profile) => {
+                            console.log(profile);
+                            database.ref(`users/${userId}/profile`).set(profile, function(error) {
+                                if (error) {
+                                    console.log('==> [Add profile fail]: '+error);
+                                } else {
+                                    console.log('==> [Add profile successfully]');
+                                }
+                            });
+                        })
+                        .catch((err) => {
+                            console.log('getProfile is error: ');
+                            console.log(err);
+                        });
+                    } 
+                });
+                //Stamp to db
                 break;
 
             //Event -> any user left group 
@@ -229,8 +133,67 @@ app.post('/webhook', (req, res)=>{
                 console.log(leftMembers);
                 break;
 
-            //Event -> Add friend or unblock
+            //Event -> Bot join to the group
+            case 'join':
+                if(events.source.type == 'group') {
+                    let groupId = events.source.groupId;
+                    let joinAt = events.source.timestamp;
+                    //add group to db
+                }
+                break;
+
+            //Event -> Bot leave from the group
+            case 'leave':
+                if(events.source.type == 'group') {
+                    let groupId = events.source.groupId;
+                    let leaveAt = events.source.timestamp;
+                    //add group to db
+                }
+                break;
+
+            //Event -> Add friend
             case 'follow':
+                console.log(`==> [Follow]`);
+                let userId = events.source.userId;
+                database.ref(`users/${userId}`).once('value').then(function(snapshot) {
+                    if(snapshot.val() == null) {
+                        jsonBody.createdAt = events.timestamp;
+                        jsonBody.updatedAt = events.timestamp;
+                        jsonBody.follow = events.type;
+                        jsonBody.replyToken = '';
+                        jsonBody.name = '';
+        
+                        database.ref(`users/${userId}`).set(jsonBody, function(error) {
+                            if (error) {
+                            console.log('add fail: '+error);
+                            } else {
+                            console.log('add successfully');
+                            }
+                        });
+
+                        getProfile(userId)
+                        .then((profile) => {
+                            console.log(profile);
+                            database.ref(`users/${userId}/profile`).set(profile, function(error) {
+                                if (error) {
+                                    console.log('==> [Add profile fail]: '+error);
+                                } else {
+                                    console.log('==> [Add profile successfully]');
+                                }
+                            });
+                        })
+                        .catch((err) => {
+                            console.log('getProfile is error: ');
+                            console.log(err);
+                        });
+                    } else {
+                        var updates = {};
+                        updates[`users/${id}/follow`] = events.type;
+                        updates[`users/${id}/updatedAt`] = events.timestamp;
+                        database.ref().update(updates);
+                        console.log('update successfully');
+                    }
+                });
                 break;
 
             //Event -> unblock
@@ -252,6 +215,91 @@ app.post('/webhook', (req, res)=>{
         res.status(400).send({errorMessage: 'body is empty!'});
     }
 });
+// ------------------------
+
+// ------- Function -------
+const getUserInfo = (userId = null) => {
+    return new Promise( (resolve, reject) => {
+        database.ref(`users/${userId}`).once('value').then(function(snapshot) {
+            let result = snapshot.val();
+            if(result == null) {
+                reject('userId not found');
+            } else {
+                resolve(result);
+            }
+        });
+
+    });
+}
+
+const getProfile = (userId) => {
+    console.log('==> [Get Profile]: userId => '+userId);
+    return new Promise((resolve, reject) => {
+        client.getProfile(userId)
+        .then(function (profile) {
+            console.log('[Get Profile]: successfully!');
+            // console.log(profile);
+            resolve(profile)
+        })
+        .catch(function (error) {
+            console.log('[Get Profile]: Error');
+            console.log(error);
+            reject(error);
+        });
+    });
+}
+
+const stampMessage = (source  = null, message = null, timestamp = null) => {
+    console.log(`==> [Stamp Message]`);
+    if (source || messageId) {
+        console.log('source and message is empty!');
+        return false
+    } else {
+        let jsonBody = {}
+        jsonBody.source = source
+        jsonBody.message = message
+        jsonBody.timestamp = timestamp
+        console.log(`[jsonBody]`);
+        console.log(jsonBody);
+        
+        let targetType = `${source.type}s`;
+        let targetId = (targetType == 'group')?source.groupId:source.userId
+
+        console.log('targetType: '+targetType);
+        console.log('targetId: '+targetId);
+
+        database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${message.id}`).set(jsonBody, function(error) {
+            if (error) {
+            console.log('add fail: '+error);
+            } else {
+            console.log('add successfully');
+            }
+        });
+    }
+
+}
+
+const replyMessage = (replyToken, message) => {
+    console.log(`==> replyMessage : replyToken:[${replyToken}], message: [${message}]`);
+    client.replyMessage(replyToken, message)
+        .then(() => {
+            console.log(`==> Reply is successfully!`);
+        })
+        .catch((err) => {
+            console.log(`==> Reply is error: ${err}`);
+        });
+}
+
+const pushMessage = (userId, message) => {
+    console.log(`==> pushMessage : userId: [${userId}], message: [${message}]`);
+    client.pushMessage(userId, message)
+        .then(() => {
+            console.log(`==> Push is successfully!`);
+        })
+        .catch((err) => {
+            console.log(`==> Push is error: ${err}`);
+        });
+}
 // ------------------------
 
 app.listen(PORT, ()=>{
