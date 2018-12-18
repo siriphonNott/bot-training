@@ -191,6 +191,23 @@ app.post('/webhook', async (req, res)=>{
                         updates[`users/${events.source.userId}/follow`] = events.type;
                         updates[`users/${events.source.userId}/updatedAt`] = events.timestamp;
                         database.ref().update(updates);
+                        
+                        //Update Profile
+                        getProfile(events.source.userId)
+                        .then((profile) => {
+                            console.log(profile);
+                            database.ref(`users/${events.source.userId}/profile`).set(profile, function(error) {
+                                if (error) {
+                                    console.log('==> [Add profile fail]: '+error);
+                                } else {
+                                    console.log('==> [Add profile successfully]');
+                                }
+                            });
+                        })
+                        .catch((err) => {
+                            console.log('getProfile is error: ');
+                            console.log(err.Error);
+                        });
                         console.log('update successfully');
                     }
                 });
@@ -198,11 +215,6 @@ app.post('/webhook', async (req, res)=>{
 
             //Event -> unblock
             case 'unfollow':
-                message = {
-                    type: 'text',
-                    text: 'ลบเราออกทำไมหรอ Y_Y'
-                };
-                replyMessage(replyToken, message);
                 break;
         
             default:
@@ -249,14 +261,14 @@ const getProfile = (userId) => {
     });
 }
 
-const stampMessage = (source  = null, message = null, timestamp = null) => {
+const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     console.log(`==> [Stamp Message]`);
     console.log('source: ');
     console.log(source);
     console.log('message: ');
     console.log(message);
     
-    if (source || message || timestamp) {
+    if (Object.keys(source).length ||  Object.keys(message).length  || timestamp) {
         console.log('source, message or timestamp is empty!');
         return false
     } else {
