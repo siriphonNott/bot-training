@@ -95,6 +95,7 @@ app.post('/webhook', async (req, res)=>{
                         jsonBody.createdAt = events.timestamp;
                         jsonBody.updatedAt = events.timestamp;
                         jsonBody.follow = '';
+                        jsonBody.createdBy = 'memberJoined';
                         jsonBody.replyToken = '';
                         jsonBody.name = '';
         
@@ -159,6 +160,7 @@ app.post('/webhook', async (req, res)=>{
                         jsonBody.createdAt = events.timestamp;
                         jsonBody.updatedAt = events.timestamp;
                         jsonBody.follow = events.type;
+                        jsonBody.createdBy = events.type;
                         jsonBody.replyToken = '';
                         jsonBody.name = '';
         
