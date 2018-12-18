@@ -188,8 +188,8 @@ app.post('/webhook', async (req, res)=>{
                         });
                     } else {
                         var updates = {};
-                        updates[`users/${id}/follow`] = events.type;
-                        updates[`users/${id}/updatedAt`] = events.timestamp;
+                        updates[`users/${events.source.userId}/follow`] = events.type;
+                        updates[`users/${events.source.userId}/updatedAt`] = events.timestamp;
                         database.ref().update(updates);
                         console.log('update successfully');
                     }
