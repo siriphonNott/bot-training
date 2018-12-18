@@ -279,6 +279,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         jsonBody.source = source
         jsonBody.message = message
         jsonBody.timestamp = timestamp
+        jsonBody.caseRelate = null;
         console.log(`[jsonBody]`);
         console.log(jsonBody);
         
