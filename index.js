@@ -342,6 +342,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     } else {
         let jsonBody = {}
         let today = _moment().utcOffset('+07:00').format('YYYYMMDD')
+        let messageId = _moment().utcOffset('+07:00').format('YYYYMMDDhhmmss')
         
         jsonBody.source = source
         jsonBody.message = message
@@ -357,7 +358,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         let targetType = `${source.type}s`;
         let targetId = (source.type == 'group')?source.groupId:source.userId
 
-        database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${message.id}`).set(jsonBody, function(error) {
+        database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${today}/${messageId}`).set(jsonBody, function(error) {
             if (error) {
             console.log('==> Stamp fail: '+error);
             } else {
