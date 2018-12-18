@@ -89,8 +89,7 @@ app.post('/webhook', async (req, res)=>{
                 let joinedMembers = events.joined.members;
                 console.log(joinedMembers);
                 console.log(`==> [Follow]`);
-                let userId = joinedMembers.userId;
-                database.ref(`users/${userId}`).once('value').then(function(snapshot) {
+                database.ref(`users/${joinedMembers.userId}`).once('value').then(function(snapshot) {
                     if(snapshot.val() == null) {
                         jsonBody.createdAt = events.timestamp;
                         jsonBody.updatedAt = events.timestamp;
@@ -154,8 +153,7 @@ app.post('/webhook', async (req, res)=>{
             //Event -> Add friend
             case 'follow':
                 console.log(`==> [Follow]`);
-                let userId = events.source.userId;
-                database.ref(`users/${userId}`).once('value').then(function(snapshot) {
+                database.ref(`users/${events.source.userId}`).once('value').then(function(snapshot) {
                     if(snapshot.val() == null) {
                         jsonBody.createdAt = events.timestamp;
                         jsonBody.updatedAt = events.timestamp;
