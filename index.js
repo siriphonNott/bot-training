@@ -121,7 +121,6 @@ app.post('/postMessage', async (req, res) => {
         }
 
         if(type == 'group') {
-            source.userId = '',
             source.groupId = targetId
             source.type = 'group'
         } else  {
