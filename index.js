@@ -148,7 +148,7 @@ app.post('/postMessage', async (req, res) => {
         let messageBody = {
             text: message,
             type: 'text',
-            id: moment.format('YYYYMMDDhhmmss')
+            id: moment.format('YYYYMMDDHHmmss')
         }
         try {
             stampMessage(source, messageBody)
@@ -391,7 +391,7 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     } else {
         let jsonBody = {}
         let today = _moment().utcOffset('+07:00').format('YYYYMMDD')
-        let messageId = _moment().utcOffset('+07:00').format('YYYYMMDDhhmmss')
+        let messageId = _moment().utcOffset('+07:00').format('YYYYMMDDHHmmss')
         
         jsonBody.source = source
         jsonBody.message = message
