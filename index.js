@@ -13,7 +13,7 @@ const moment = _moment().utcOffset('+07:00');
 const app = express();
 const PORT = process.env.PORT ||  5000;
 const client = new line.Client({
-    channelAccessToken: '67UQoneQDFAObETiUEGx5DH2dsZRComFPjjPCCrNghi/35LH9Q7lVwleXQj3XTFfDKhO9ggbKh4VDZXoqzX3d98xcxK/OZrSI4BYf5lGLzpQ+Og6OniOY1PTX7Yf22DAg8un4AH9b8poHrszPankKwdB04t89/1O/w1cDnyilFU='
+    channelAccessToken: 'TtiT0Sy/z9J0RPpMTPQJmJbsdM7ZpFkXfB1Dp1p+kF1+biFAmGeCUpD2iyTEFDoQwQi5WYGXz0rkb3ZDpiWslu0B5zCzmX4faMlwpzRdVB9w+2ZvAsTc7MOqHcKONuPhEo3fCU0TcJH+qZT6g/XcQgdB04t89/1O/w1cDnyilFU='
 });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
