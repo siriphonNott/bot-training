@@ -105,6 +105,39 @@ app.post('/caseReserve', async (req, res) => {
     }
 });
 
+//Submit Case
+app.post('/submitCase', async (req, res) => { 
+    console.log('==> /submitCase')
+    let body = req.body;
+    console.log('==> boby');
+    console.log(body);
+    console.log(Object.keys(body).length);
+    
+    if(Object.keys(body).length != 0) {
+        let messageId = body.messageId;
+        let sourceType = body.sourceType;
+        let agentName = body.agentName;
+
+        let targetType = `${sourceType}s`;
+        let targetId = (sourceType == 'group')?body.groupId:body.userId
+
+        let messagesKey = messageId.substring(0, 8);
+       
+        try {
+            let updates = {};
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseRelated`] = agentName
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseOpenDate`] =  moment.valueOf();
+            database.ref().update(updates);
+            res.send({message: `success`});
+        } catch (error) {
+            res.status(400).send({message: `can't update message. `});
+        }
+    } else {
+        console.log('==> body is empty!');
+        res.status(400).send({message: 'body is empty!'});
+    }
+});
+
 //Stamp message
 app.post('/postMessage', async (req, res) => {
     console.log('==> /postMessage')
