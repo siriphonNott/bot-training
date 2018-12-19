@@ -79,6 +79,49 @@ app.post('/role', (req, res) => {
     }
 });
 
+app.post('/caseReserve', async (req, res) => { 
+    console.log('==> /caseReserve')
+    let body = req.body;
+    console.log('==> boby');
+    console.log(body);
+    if(Object.keys(body).length != 0) {
+        let messageId = body.messageId;
+        let sourceType = body.sourceType;
+        let isReserve = body.isReserve;
+        let agentName = body.agentName;
+        let targetType = `${sourceType}s`;
+        let targetId = (sourceType == 'group')?body.groupId:body.userId
+        let caseReserve = ''
+
+        if(isReserve) {
+            caseReserve = agentName
+        }
+        messagesKey = messageId.substring(0, 8);
+       
+        try {
+            let updates = {};
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseReserve`] = caseReserve
+            database.ref().update(updates);
+            res.send({message: `success`});
+            // database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}`).set(jsonBody, function(error) {
+            //     if (error) {
+            //         console.log('==> Case Reserve is fail: ');
+            //         console.log(error);
+            //         res.status(400).send({message: `fail`});
+            //     } else {
+            //         res.send({message: `success`});
+            //         console.log('==> Case Reserve is successfully');
+            //     }
+            // });
+            
+        } catch (error) {
+            res.status(400).send({message: `can't send message. `});
+        }
+    } else {
+        res.status(400).send({message: 'body is empty!'});
+    }
+});
+
 //Stamp message
 app.post('/postMessage', async (req, res) => {
     console.log('==> /postMessage')
