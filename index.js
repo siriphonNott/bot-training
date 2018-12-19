@@ -46,13 +46,6 @@ app.get('/', (req, res) => {
     console.log('==> Get /')
     console.log(req.params);
     console.log(req.query);
-    
-    // if(Object.keys(req.params).length) {
-    //     console.log('ok');
-    // } else {
-    //     throw {status:'not good'};
-    // }
-   
 });
 
 //Set role
@@ -79,6 +72,7 @@ app.post('/role', (req, res) => {
     }
 });
 
+//Case Reserve
 app.post('/caseReserve', async (req, res) => { 
     console.log('==> /caseReserve')
     let body = req.body;
@@ -103,17 +97,6 @@ app.post('/caseReserve', async (req, res) => {
             updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseReserve`] = caseReserve
             database.ref().update(updates);
             res.send({message: `success`});
-            // database.ref(`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}`).set(jsonBody, function(error) {
-            //     if (error) {
-            //         console.log('==> Case Reserve is fail: ');
-            //         console.log(error);
-            //         res.status(400).send({message: `fail`});
-            //     } else {
-            //         res.send({message: `success`});
-            //         console.log('==> Case Reserve is successfully');
-            //     }
-            // });
-            
         } catch (error) {
             res.status(400).send({message: `can't send message. `});
         }
@@ -383,8 +366,7 @@ const getProfile = (userId) => {
 
 const stampMessage = (source  = {}, message = {}, timestamp = null) => {
     console.log(`==> [Stamp Message]`)
-    timestamp  = timestamp || moment.unix()
-    
+    timestamp  = timestamp || moment.valueOf()
     if (Object.keys(source).length == 0  ||  Object.keys(message).length == 0) {
         console.log('source or message  is empty!');
         return false
