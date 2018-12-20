@@ -117,7 +117,7 @@ app.post('/submitCase', async (req, res) => {
         let messageId = body.messageId;
         let sourceType = body.sourceType;
         let agentName = body.agentName;
-
+        let caseId = body.caseId;
         let targetType = `${sourceType}s`;
         let targetId = (sourceType == 'group')?body.groupId:body.userId
 
@@ -125,12 +125,45 @@ app.post('/submitCase', async (req, res) => {
        
         try {
             let updates = {};
-            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseRelated`] = agentName
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseRelated`] = caseId
             updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseOpenDate`] =  moment.valueOf();
             database.ref().update(updates);
             res.send({message: `success`});
         } catch (error) {
-            res.status(400).send({message: `can't update message. `});
+            res.status(400).send({message: `can't update message to firebase. `});
+        }
+    } else {
+        console.log('==> body is empty!');
+        res.status(400).send({message: 'body is empty!'});
+    }
+});
+
+//Delete Message
+app.post('/deleteMessage', async (req, res) => { 
+    console.log('==> /deleteMessage')
+    let body = req.body;
+    console.log('==> boby');
+    console.log(body);
+    console.log(Object.keys(body).length);
+    
+    if(Object.keys(body).length != 0) {
+        let messageId = body.messageId;
+        let sourceType = body.sourceType;
+        let agentName = body.agentName;
+        let targetType = `${sourceType}s`;
+        let targetId = (sourceType == 'group')?body.groupId:body.userId
+        let messagesKey = messageId.substring(0, 8);
+       
+        try {
+            let updates = {};
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/isDeleted`] = true
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseRelated`] = agentName
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseReserve`] = agentName
+            updates[`chatBotMessages/${targetType}/${targetId}/messages/${messagesKey}/${messageId}/case/caseOpenDate`] =  moment.valueOf();
+            database.ref().update(updates);
+            res.send({message: `success`});
+        } catch (error) {
+            res.status(400).send({message: `can't update message to firebase. `});
         }
     } else {
         console.log('==> body is empty!');
@@ -415,7 +448,8 @@ const stampMessage = (source  = {}, message = {}, timestamp = null) => {
         jsonBody.case = {
             caseRelated: '',
             caseOpenDate: '',
-            caseReserve: ''
+            caseReserve: '',
+            isDeleted: false,
         }
         console.log(`[jsonBody]`);
         console.log(jsonBody);
