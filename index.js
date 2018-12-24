@@ -13,7 +13,8 @@ const moment = _moment().utcOffset('+07:00');
 const app = express();
 const PORT = process.env.PORT ||  5000;
 const client = new line.Client({
-    channelAccessToken: 'TtiT0Sy/z9J0RPpMTPQJmJbsdM7ZpFkXfB1Dp1p+kF1+biFAmGeCUpD2iyTEFDoQwQi5WYGXz0rkb3ZDpiWslu0B5zCzmX4faMlwpzRdVB9w+2ZvAsTc7MOqHcKONuPhEo3fCU0TcJH+qZT6g/XcQgdB04t89/1O/w1cDnyilFU='
+    // channelAccessToken: 'TtiT0Sy/z9J0RPpMTPQJmJbsdM7ZpFkXfB1Dp1p+kF1+biFAmGeCUpD2iyTEFDoQwQi5WYGXz0rkb3ZDpiWslu0B5zCzmX4faMlwpzRdVB9w+2ZvAsTc7MOqHcKONuPhEo3fCU0TcJH+qZT6g/XcQgdB04t89/1O/w1cDnyilFU=' //Thai Credit
+    channelAccessToken: 'IlGjyZu1eJKihgbWXB7bV/THLbINhQKNX/wyZfSKQl56yYNjsRFAfCX91Yo1nUIQSPh9Qm+aHf2x5Fvb5v619T54ClgTd5N5KFzoO2qxYg4y2SHFQO6gEggrZrSUXs+daq3I0K5GDyg5mVO5AWDzHwdB04t89/1O/w1cDnyilFU='
 });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
